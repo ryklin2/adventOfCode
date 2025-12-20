@@ -1,52 +1,37 @@
-import numpy
-""" 
-AoC1 Secret Entrance
-This module contains functions to solve the Advent of Code Day 1 challenge.
-
-finish decorating by dec 12th
-dial from 0 to 99
-clicks when reaching the right number
-
-YOU MUST ADD AN L50 OR R50 TO THE INPUT.TXT TO GET THE CORRECT ANSWER
-"""
-##open and read input.txt
-def parse_and_track_sums(filename):
-    sumL = 50
-    sumR = 0
-    matches = 0
-    dial = 50
-    past_zero = 0
+def solve(filename):
+    position = 50  # Dial starts at 50
+    part1_matches = 0
+    part2_clicks = 0
     
     with open(filename, 'r') as file:
         for line in file:
             line = line.strip()
+            if not line:
+                continue
             
             direction = line[0]
             value = int(line[1:])
             
-            old_dial = dial
+            if direction == 'R':
+                new_pos = position + value
+                part2_clicks += new_pos // 100
+                position = new_pos % 100
+            else:  # L
+                if position > 0 and value >= position:
+                    part2_clicks += 1  
+                    remaining = value - position
+                    part2_clicks += remaining // 100  # Additional full rotations
+                elif position == 0:
+                    part2_clicks += value // 100
+                position = (position - value) % 100
             
-            if direction == 'L':
-                sumL += value
-                if value > old_dial:
-                    past_zero += 1
-            elif direction == 'R':
-                sumR += value
-                if dial < old_dial:
-                    past_zero += 1
-            if sumL % 100 == sumR % 100:
-                matches += 1
+            if position == 0:
+                part1_matches += 1
                 
                 
-            
-    print(f"Total Left Sum: {sumL}")
-    print(f"Total Right Sum: {sumR}")
-    print(f"Number of Matches: {matches}")
-    print(f"times passed 0: {past_zero}")
-    
-    
-    return sumL, sumR, matches
-
+    print(f"Number of Matches: {part1_matches}")
+    print(f"Number of Matches: {part2_clicks}")
+    return part1_matches, part2_clicks
 
 if __name__ == "__main__":
-    parse_and_track_sums('input.txt')
+    solve('input.txt')
