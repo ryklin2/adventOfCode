@@ -15,7 +15,7 @@ def parse_and_track_sums(filename):
     sumR = 0
     matches = 0
     dial = 50
-    past0 = 0
+    past_zero = 0
     
     with open(filename, 'r') as file:
         for line in file:
@@ -24,15 +24,17 @@ def parse_and_track_sums(filename):
             direction = line[0]
             value = int(line[1:])
             
+            old_dial = dial
+            
             if direction == 'L':
                 sumL += value
+                if value > old_dial:
+                    past_zero += 1
             elif direction == 'R':
                 sumR += value
-                
+                if dial < old_dial:
+                    past_zero += 1
             if sumL % 100 == sumR % 100:
-                matches += 1
-                
-            if sumL - sumR <=100:
                 matches += 1
                 
                 
@@ -40,7 +42,7 @@ def parse_and_track_sums(filename):
     print(f"Total Left Sum: {sumL}")
     print(f"Total Right Sum: {sumR}")
     print(f"Number of Matches: {matches}")
-    print(f"times passed 0: 
+    print(f"times passed 0: {past_zero}")
     
     
     return sumL, sumR, matches
